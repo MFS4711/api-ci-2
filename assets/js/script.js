@@ -8,8 +8,35 @@ document.getElementById("status").addEventListener("click", e => getStatus(e));
 // post data
 document.getElementById("submit").addEventListener("click", e => postForm(e));
 
+// currently the form data received does not match criteria of API
+// data shows multiple option arrays when it should just be one to be a key and the values
+// function below creates an empty array, takes each entry of the option array and puts that into the new array
+// it then deletes all mention of "options" from the form data and creates a new key/value with the "options"/new array
+// returns from to be used in post form
+function processOptions(form) {
+    
+    let optArray = [];
+
+    for (let entry of form.entries()) {
+        if (entry[0]=== "options") {
+            optArray.push(entry[1]);
+        }
+    }
+
+    form.delete("options");
+
+    form.append("options", optArray.join());
+
+    return form;
+}
+
 async function postForm(e) {
-    const form = new FormData(document.getElementById("checksform"));
+    const form = processOptions(new FormData(document.getElementById("checksform")));
+
+    // // test code to check if data is sent in the required form - see procesOptions function for more info
+    // for (let entry of form.entries()) {
+    //     console.log(entry);
+    // }
 
     // below may be specific to API but follow instructions on the API
     // use body: form, attaches the form
